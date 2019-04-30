@@ -1,0 +1,52 @@
+version: "3"
+services:
+    ympd:
+        build:
+            dockerfile: '${PWD}/ympd/Dockerfile'
+            context: '${PWD}/ympd'
+        ports:
+            - '${YMPD_PORT}:8080'
+        links:
+            - mpd
+        restart: always
+        logging:
+            options:
+                max-size: 1g
+        command: "-h mpd -p 6600 -w 8080"
+
+    mpd:
+        build:
+            args:
+                MPD_UID: '${MPD_UID}'
+                MPD_GID: '${MPD_GID}'
+            dockerfile: '${PWD}/mpd/Dockerfile'
+            context: '${PWD}/mpd'
+        ports:
+            - '${MPD_PORT}:6600'
+            - '${MPD_STREAM_PORT}:6680'
+        volumes:
+            - '${MEDIA_DIR}:/var/lib/mpd/media:ro'
+            - '${PWD}/mpdstate:/var/lib/mpd/state/:rw'
+            - '${PWD}/mpd/mpd.conf:/var/lib/mpd/mpd.conf:ro'
+            - '${PWD}/soundshare:/var/lib/mpd/soundshare:rw'
+        restart: always
+        logging:
+            options:
+                max-size: 1g
+        user: '${MPD_UID}'
+
+    snapcast:
+        build:
+            dockerfile: '$PWD/snapserver/Dockerfile'
+            context: '$PWD/snapserver'
+        ports:
+            - '${SNAPCAST_PORT}:1704'
+        volumes:
+            - '${PWD}/soundshare:/var/lib/snapserver/soundshare:rw'
+        depends_on:
+            - mpd
+        restart: always
+        command: "-s pipe:///var/lib/snapserver/soundshare/snapfifo?name=default&sampleformat=44100:16:2"
+        logging:
+            options:
+                max-size: 1g
