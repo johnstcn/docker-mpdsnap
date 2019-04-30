@@ -28,7 +28,6 @@ services:
             - '${MEDIA_DIR}:/var/lib/mpd/media:ro'
             - '${PWD}/mpdstate:/var/lib/mpd/state/:rw'
             - '${PWD}/mpd/mpd.conf:/var/lib/mpd/mpd.conf:ro'
-            - '${PWD}/soundshare:/var/lib/mpd/soundshare:rw'
         restart: always
         logging:
             options:
@@ -42,7 +41,7 @@ services:
         ports:
             - '${SNAPCAST_PORT}:1704'
         volumes:
-            - '${PWD}/soundshare:/var/lib/snapserver/soundshare:rw'
+            - '${PWD}/mpdstate/snapfifo:/var/lib/snapserver/soundshare/snapfifo:rw'
         depends_on:
             - mpd
         restart: always
