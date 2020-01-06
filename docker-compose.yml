@@ -42,10 +42,10 @@ services:
             - '${SNAPCAST_PORT}:1704'
         volumes:
             - '${PWD}/mpdstate/snapfifo:/var/lib/snapserver/soundshare/snapfifo:rw'
+            - '${PWD}/snapserver/snapserver.conf:/var/lib/snapserver/snapserver.conf:ro'
         depends_on:
             - mpd
         restart: always
-        command: "-s pipe:///var/lib/snapserver/soundshare/snapfifo?name=default&sampleformat=44100:16:2"
         logging:
             options:
                 max-size: 1g
