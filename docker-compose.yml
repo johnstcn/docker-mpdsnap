@@ -33,6 +33,10 @@ services:
             options:
                 max-size: 1g
         user: '${MPD_UID}'
+        cap_drop:
+            - ALL
+        cap_add:
+            - SYS_NICE # https://gitlab.alpinelinux.org/alpine/aports/-/issues/11992
 
     snapcast:
         build:
